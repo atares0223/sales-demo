@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableFeignClients
-@ComponentScan(value = {"com.waaw.common.bean","com.waaw.customer"})
+@EnableFeignClients(basePackages={"com.waaw.feign.api"})
+@ComponentScan(value = {"com.waaw.common.bean","com.waaw.customer","com.waaw.feign.api"})
 public class CustomerApplication {
 
     public static void main(String[] args) {

@@ -21,6 +21,11 @@
         <module>common</module>
         <module>dependencies</module>
         <module>mic-common</module>
+        <module>feign-api</module>
+        <module>token-server</module>
+        <module>gateway</module>
+        <module>user</module>
+        <module>merchant</module>
     </modules>
     <packaging>pom</packaging>
 </project>

@@ -7,8 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@ComponentScan(value = {"com.waaw.common.bean","com.waaw.order"})
-@EnableFeignClients
+@ComponentScan(value = {"com.waaw.common.bean","com.waaw.order","com.waaw.feign.api"})
+@EnableFeignClients(basePackages={"com.waaw.feign.api"})
 @EnableTransactionManagement
 public class OrderApplication {
 

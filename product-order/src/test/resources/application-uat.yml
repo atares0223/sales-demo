@@ -1,0 +1,23 @@
+spring:
+  config:
+    import:
+      - nacos:share
+      - nacos:order
+      - nacos:share-sentinel
+  cloud:
+    nacos:
+      discovery:
+        group: sales
+        namespace: dev
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        group: sales
+        file-extension: yaml
+        namespace: uat
+        username: nacos
+        password: nacos
+
+server:
+  port: 8891
+

@@ -1,15 +1,17 @@
 package com.waaw.stock.service;
 
-import com.waaw.common.domain.stock.GoodDTO;
-import com.waaw.common.exception.BusinessException;
-import com.waaw.stock.repository.GoodRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.waaw.common.domain.stock.GoodDTO;
+import com.waaw.common.exception.BusinessException;
+import com.waaw.stock.repository.GoodRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
-
+@Transactional
 public class GoodService {
     private final GoodRepository goodRepository;
     @Transactional

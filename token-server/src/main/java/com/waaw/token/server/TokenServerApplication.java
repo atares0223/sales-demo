@@ -1,17 +1,23 @@
-package com.waaw.stock;
+package com.waaw.token.server;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
+import com.alibaba.csp.sentinel.cluster.server.ClusterTokenServer;
+import com.alibaba.csp.sentinel.cluster.server.SentinelDefaultTokenServer;
+import com.alibaba.csp.sentinel.cluster.server.config.ClusterServerConfigManager;
+import com.alibaba.csp.sentinel.cluster.server.config.ServerTransportConfig;
 
-@SpringBootApplication
-@EnableFeignClients(basePackages={"com.waaw.feign.api"})
-//@EnableTransactionManagement
-@ComponentScan(value = {"com.waaw.common.bean","com.waaw.stock","com.waaw.feign.api"})
-public class StockApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(StockApplication.class, args);
+//@SpringBootApplication
+public class TokenServerApplication {
+    static{
+        System.setProperty("csp.sentinel.dashboard.server","localhost:8080");
+        System.setProperty("csp.sentinel.api.port","8719");
+        System.setProperty("project.name","token-server");
+        System.setProperty("csp.sentinel.log.use.pid","true");
+    }
+    public static void main(String[] args) throws Exception {
+        ClusterTokenServer tokenServer = new SentinelDefaultTokenServer();
+        ClusterServerConfigManager.loadGlobalTransportConfig(new ServerTransportConfig().setIdleSeconds(600).setPort(10217));
+
+        tokenServer.start();
     }
 
 }

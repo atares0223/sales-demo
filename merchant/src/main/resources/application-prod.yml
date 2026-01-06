@@ -1,0 +1,22 @@
+spring:
+  config:
+    import:
+      - nacos:share
+      - nacos:merchant
+      - nacos:share-sentinel
+  cloud:
+    nacos:
+      discovery:
+        group: sales
+        namespace: prod
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        group: sales
+        file-extension: yaml
+        namespace: prod
+        username: nacos
+        password: nacos
+    openfeign:
+      http2client:
+        enabled: true

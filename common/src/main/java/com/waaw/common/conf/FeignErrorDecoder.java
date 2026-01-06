@@ -33,8 +33,8 @@ public class FeignErrorDecoder extends ErrorDecoder.Default {
 
         try {
             // 如果是FeignException，则对其进行处理，并抛出BusinessException
-            if (exception instanceof FeignException && ((FeignException) exception).responseBody().isPresent()) {
-                ByteBuffer responseBody = ((FeignException) exception).responseBody().get();
+            if (exception instanceof FeignException feignException && feignException.responseBody().isPresent()) {
+                ByteBuffer responseBody = feignException.responseBody().get();
                 String bodyText = StandardCharsets.UTF_8.newDecoder().decode(responseBody.asReadOnlyBuffer()).toString();
                 // 将异常信息，转换为ExceptionInfo对象
                 ExceptionInfo exceptionInfo = GsonUtil.gson.fromJson(bodyText, ExceptionInfo.class);

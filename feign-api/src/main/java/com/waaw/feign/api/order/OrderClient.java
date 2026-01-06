@@ -1,17 +1,23 @@
-package com.waaw.customer.client;
+package com.waaw.feign.api.order;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.waaw.common.ApiResponse;
 import com.waaw.common.Constants;
-import com.waaw.common.conf.FeignErrorDecoder;
-import com.waaw.common.conf.ResultFeignDecoder;
 import com.waaw.common.domain.order.CreateOrderDTO;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import com.waaw.common.domain.order.ProductOrderDTO;
 
-@FeignClient(name= Constants.ORDER_SERVICE
-//        ,configuration = {FeignErrorDecoder.class, ResultFeignDecoder.class}
-)
+@FeignClient(name= Constants.ORDER_SERVICE,fallbackFactory = OrderClientFallbackFactory.class)
+@Component
 public interface OrderClient {
-    @PostMapping("/create")
-    ApiResponse createOrder(@RequestBody CreateOrderDTO createOrderDTO);
+    @PostMapping("/order/create")
+    ApiResponse<ProductOrderDTO> createOrder(@RequestBody CreateOrderDTO createOrderDTO);
+
+    @GetMapping("/order/{id}")
+    public ApiResponse<ProductOrderDTO> getOrder(@PathVariable("id") Long id);
 }

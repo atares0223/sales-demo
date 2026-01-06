@@ -1,6 +1,5 @@
 package com.waaw.common.enums;
 
-import com.waaw.common.exception.BusinessException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

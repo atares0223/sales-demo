@@ -1,59 +1,50 @@
 package com.waaw.common.bean;
 
-import com.waaw.common.ApiResponse;
-import com.waaw.common.Constants;
-import com.waaw.common.exception.BusinessException;
-import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Objects;
+import com.waaw.common.ApiResponse;
+import com.waaw.common.exception.BusinessException;
+
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler  {
+public class GlobalExceptionHandler {
+    private void logError(String url, String message) {
+        log.error("URL:{} ,{}", url, message);
+    }
 
     @ExceptionHandler({BindException.class})
-    public ApiResponse exceptionHandler(BindException e, HttpServletRequest request) {
+    public ApiResponse<Object> exceptionHandler(BindException e, HttpServletRequest request) {
         FieldError fieldError = e.getBindingResult().getFieldError();
-        String field = fieldError.getField();
-        String msg = fieldError.getDefaultMessage();
-        String errorMsg = field+" : "+msg;
-        log.error("URL:{} ,{}", request.getRequestURI(),errorMsg);
-        return ApiResponse.error(errorMsg);
+        if (fieldError != null) {
+            String field = fieldError.getField();
+            String msg = fieldError.getDefaultMessage();
+            String errorMsg = field + " : " + msg;
+            logError(request.getRequestURI(),errorMsg);
+            return ApiResponse.error(errorMsg);
+        }
+        return ApiResponse.error();
     }
 
     @ExceptionHandler(FeignException.class)
-    public ApiResponse exceptionHandler(FeignException e, HttpServletRequest request) {
+    public ApiResponse<Object> exceptionHandler(FeignException e, HttpServletRequest request) {
         String errorMsg = e.getMessage();
-        log.error("URL:{} ,{}", request.getRequestURI(),errorMsg);
+        logError(request.getRequestURI(),errorMsg);
         return ApiResponse.error(errorMsg);
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ApiResponse exceptionHandler(BusinessException e, HttpServletRequest request) {
+    public ApiResponse<Object> exceptionHandler(BusinessException e, HttpServletRequest request) {
         String errorMsg = e.getMessage();
-        log.error("URL:{} ,{}", request.getRequestURI(),errorMsg);
+        logError(request.getRequestURI(),errorMsg);
         return ApiResponse.error(errorMsg);
     }
-
-//    @ExceptionHandler({BindException.class})
-//    @ResponseBody
-//    public ApiResponse bindExceptionHandler(BindException exception) {
-//        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-//        String errorMessage = fieldErrors.get(0).getDefaultMessage();
-//        log.error(errorMessage, exception);
-//        return ApiResponse.error(ResultCodeEnum.ERROR_PARAMETER.getCode(), errorMessage);
-//    }
-
-//    @ExceptionHandler({BusinessException.class})
-//    public ApiResponse businessExceptionHandler(BusinessException exception) {
-//        log.error(exception.getMessage(), exception);
-//        return ApiResponse.error(exception.getCode(), exception.getMessage());
-//    }
 
 }
