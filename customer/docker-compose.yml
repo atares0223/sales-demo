@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  customer-service:
+    build:
+      context: ..
+      dockerfile: customer/Dockerfile
+    image: customer-service:latest
+    container_name: customer-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_OPTS=-Xms512m -Xmx1024m -XX:+UseG1GC
+      # Nacos 配置
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=nacos:8848
+      # 数据库配置（如果需要）
+      # - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/customer_db
+      # - SPRING_DATASOURCE_USERNAME=root
+      # - SPRING_DATASOURCE_PASSWORD=password
+      # RabbitMQ 配置（如果需要）
+      # - SPRING_RABBITMQ_HOST=rabbitmq
+      # - SPRING_RABBITMQ_PORT=5672
+      # - SPRING_RABBITMQ_USERNAME=guest
+      # - SPRING_RABBITMQ_PASSWORD=guest
+    networks:
+      - sales-network
+    depends_on:
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nacos 服务（示例，实际使用时可以连接到外部 Nacos）
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: nacos
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=password
+    ports:
+      - "8848:8848"
+    networks:
+      - sales-network
+    restart: unless-stopped
+
+networks:
+  sales-network:
+    driver: bridge

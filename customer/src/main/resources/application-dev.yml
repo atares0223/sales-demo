@@ -4,6 +4,7 @@ spring:
       - nacos:share
       - nacos:customer
       - nacos:share-sentinel
+      - nacos:share-seata
   cloud:
     nacos:
       discovery:
@@ -17,7 +18,18 @@ spring:
         namespace: dev
         username: nacos
         password: nacos
-    openfeign:
-      http2client:
-        enabled: true
+
+
+  rabbitmq:
+    address-shuffle-mode: none
+    host: localhost
+    port: 5672
+    username: pivot_v2
+    password: Pivot143!
+    virtual-host: /
+    # openfeign:
+    #   http2client:
+    #     enabled: true
+
+
 

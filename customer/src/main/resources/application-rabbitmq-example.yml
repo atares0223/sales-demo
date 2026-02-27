@@ -1,0 +1,61 @@
+# RabbitMQ 和 Micrometer 配置示例
+# 可以将这些配置添加到 Nacos 配置中心或 application.yml 中
+
+spring:
+  rabbitmq:
+    # RabbitMQ 连接配置
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 连接池配置
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    # 消费者配置
+    listener:
+      simple:
+        acknowledge-mode: auto
+        concurrency: 5
+        max-concurrency: 10
+        prefetch: 10
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 1.5
+
+# Spring Boot Actuator 配置
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露所有端点，生产环境建议只暴露必要的端点
+        include: health,info,metrics,prometheus,rabbitmq
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    # 启用 RabbitMQ 指标
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    # 指标标签配置
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:dev}
+    # 启用 RabbitMQ 指标收集
+    rabbitmq:
+      enabled: true
+  # 健康检查配置
+  health:
+    rabbit:
+      enabled: true
+    db:
+      enabled: true
