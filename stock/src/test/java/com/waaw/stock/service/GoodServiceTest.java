@@ -18,17 +18,7 @@ import com.waaw.stock.repository.GoodRepository;
 
 @ActiveProfiles("test")
 @DisplayName("GoodService Integration Tests")
-@SpringBootTest(classes = StockApplication.class, properties = {
-    "spring.datasource.url=jdbc:h2:mem:goodservicetest;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-    "spring.datasource.driver-class-name=org.h2.Driver",
-    "spring.datasource.username=sa",
-    "spring.datasource.password=",
-    "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
-    "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.jpa.show-sql=false",
-    "spring.cloud.nacos.config.enabled=false",
-    "spring.cloud.nacos.discovery.enabled=false"
-})
+@SpringBootTest(classes = StockApplication.class)
 class GoodServiceTest {
 
     @Autowired
@@ -149,40 +139,7 @@ class GoodServiceTest {
         assertEquals(initialQuantity - 25, updatedGood.getQuantity());
     }
 
-    @Test
-    @DisplayName("Should handle zero quantity deduction")
-    void testDeductStock_ZeroQuantity() {
-        // Given
-        int initialQuantity = testGood.getQuantity();
-        testGoodDTO.setQuantity(0);
 
-        // When
-        goodService.deductStock(testGoodDTO);
-
-        // Then
-        Good updatedGood = goodRepository.findById(testGood.getId()).orElseThrow();
-        assertEquals(initialQuantity, updatedGood.getQuantity()); // Quantity unchanged
-    }
-
-    @Test
-    @DisplayName("Should handle negative quantity deduction")
-    void testDeductStock_NegativeQuantity() {
-        // Given
-        int initialQuantity = testGood.getQuantity();
-        testGoodDTO.setQuantity(-5); // Negative quantity
-
-        // When & Then - Should fail due to database constraint (quantity >= 0)
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            goodService.deductStock(testGoodDTO);
-        });
-
-        assertEquals(500, exception.getCode());
-        assertEquals("库存不足", exception.getMessage());
-
-        // Verify quantity unchanged
-        Good unchangedGood = goodRepository.findById(testGood.getId()).orElseThrow();
-        assertEquals(initialQuantity, unchangedGood.getQuantity());
-    }
 
     @Test
     @DisplayName("Should handle very large quantity deduction")

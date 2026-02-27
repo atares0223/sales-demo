@@ -4,6 +4,7 @@ spring:
       - nacos:share
       - nacos:order
       - nacos:share-sentinel
+      - nacos:share-seata
   cloud:
     nacos:
       discovery:

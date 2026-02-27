@@ -3,6 +3,8 @@ spring:
     import:
       - nacos:share
       - nacos:stock
+      - nacos:share-sentinel
+      - nacos:share-seata
   cloud:
     nacos:
       discovery:

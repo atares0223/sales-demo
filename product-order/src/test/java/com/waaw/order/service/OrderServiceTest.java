@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.waaw.common.domain.order.CreateOrderDTO;
 import com.waaw.common.exception.BusinessException;
 import com.waaw.order.OrderApplication;
 import com.waaw.order.domain.ProductOrder;
@@ -28,12 +29,16 @@ class OrderServiceTest {
     private OrderService orderService;
 
     private ProductOrder testOrder;
+    private CreateOrderDTO testCreateOrderDTO;
 
     @BeforeEach
     void setUp() {
         // Clean up the database before each test
         orderRepository.deleteAll();
 
+        testCreateOrderDTO = new CreateOrderDTO();
+        testCreateOrderDTO.setType("STANDARD");
+        testCreateOrderDTO.setCost(49.99);
         // Create test order without ID (it will be auto-generated)
         testOrder = new ProductOrder();
         testOrder.setType("PREMIUM");
@@ -49,7 +54,7 @@ class OrderServiceTest {
         orderToSave.setCost(49.99);
 
         // When
-        ProductOrder result = orderService.createOrder(orderToSave);
+        ProductOrder result = orderService.createOrder(testCreateOrderDTO);
 
         // Then
         assertNotNull(result);
@@ -62,7 +67,7 @@ class OrderServiceTest {
     @DisplayName("Should create order with existing order data")
     void testCreateOrder_WithExistingOrder() {
         // When
-        ProductOrder result = orderService.createOrder(testOrder);
+        ProductOrder result = orderService.createOrder(testCreateOrderDTO);
 
         // Then
         assertNotNull(result);

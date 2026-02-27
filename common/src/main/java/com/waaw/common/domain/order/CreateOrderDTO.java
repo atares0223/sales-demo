@@ -1,12 +1,18 @@
 package com.waaw.common.domain.order;
 
-import com.waaw.common.domain.stock.GoodDTO;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import jakarta.validation.constraints.*;
-
 import java.util.List;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import com.waaw.common.domain.stock.GoodDTO;
+
+import lombok.Data;
 
 @Data
 public class CreateOrderDTO {

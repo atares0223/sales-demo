@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.waaw.common.domain.order.CreateOrderDTO;
 import com.waaw.common.domain.order.ProductOrderDTO;
 import com.waaw.common.domain.stock.GoodDTO;
@@ -35,11 +34,13 @@ import com.waaw.order.domain.ProductOrder;
 import com.waaw.order.repository.OrderRepository;
 import com.waaw.order.service.OrderService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @ActiveProfiles("test")
 @DisplayName("OrderController Tests")
-@SpringBootTest(classes = {OrderApplication.class})
+@SpringBootTest(classes = { OrderApplication.class })
 @AutoConfigureWebMvc
 @Slf4j
 class OrderControllerTest {
@@ -69,13 +70,17 @@ class OrderControllerTest {
         // Clear the database before each test
         orderRepository.deleteAll();
 
+        testCreateOrderDTO = new CreateOrderDTO();
+        testCreateOrderDTO.setType("STANDARD");
+        testCreateOrderDTO.setCost(49.99);
+
         // Setup test ProductOrder without ID (will be auto-generated)
         testProductOrder = new ProductOrder();
         testProductOrder.setType("PREMIUM");
         testProductOrder.setCost(99.99);
 
         // Save to database to get real ID
-        testProductOrder = orderService.createOrder(testProductOrder);
+        testProductOrder = orderService.createOrder(testCreateOrderDTO);
 
         // Setup test ProductOrderDTO
         testProductOrderDTO = new ProductOrderDTO();
@@ -84,9 +89,7 @@ class OrderControllerTest {
         testProductOrderDTO.setCost(99.99);
 
         // Setup test CreateOrderDTO
-        testCreateOrderDTO = new CreateOrderDTO();
-        testCreateOrderDTO.setType("STANDARD");
-        testCreateOrderDTO.setCost(49.99);
+
         List<GoodDTO> goodDTOList = new ArrayList<>();
         GoodDTO goodDTO = new GoodDTO();
         goodDTO.setId(1L);
@@ -105,7 +108,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/order/{id}", orderId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                
+
                 .andExpect(jsonPath("$.data.id").value(testProductOrder.getId()))
                 .andExpect(jsonPath("$.data.type").value("PREMIUM"))
                 .andExpect(jsonPath("$.data.cost").value(99.99));
@@ -119,7 +122,7 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testCreateOrderDTO)))
                 .andExpect(status().isOk())
-                
+
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 

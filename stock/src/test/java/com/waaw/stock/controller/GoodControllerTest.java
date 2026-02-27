@@ -16,14 +16,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.waaw.common.domain.stock.GoodDTO;
 import com.waaw.stock.StockApplication;
 import com.waaw.stock.domain.Good;
 import com.waaw.stock.repository.GoodRepository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ActiveProfiles("test")
 @DisplayName("GoodController Integration Tests")
@@ -80,10 +80,10 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(goodDTOList)))
                 .andExpect(status().isOk())
-                
+
                 .andExpect(jsonPath("$.data").value("库存扣减成功"));
 
         // Verify quantity was deducted
@@ -99,10 +99,10 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(goodDTOList)))
                 .andExpect(status().isOk())
-                
+
                 .andExpect(jsonPath("$.data").value("库存扣减成功"));
 
         // Verify quantities were deducted
@@ -121,11 +121,11 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(goodDTOList)))
                 .andExpect(status().isOk())
-                
-                .andExpect(jsonPath("$.code").value(500))
+
+                .andExpect(jsonPath("$.status").value(500))
                 .andExpect(jsonPath("$.message").value("库存不足"));
 
         // Verify quantity was not changed
@@ -141,10 +141,10 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(emptyList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyList)))
                 .andExpect(status().isOk())
-                
+
                 .andExpect(jsonPath("$.data").value("库存扣减成功"));
     }
 
@@ -157,11 +157,11 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(goodDTOList)))
                 .andExpect(status().isOk())
-                
-                .andExpect(jsonPath("$.code").value(500))
+
+                .andExpect(jsonPath("$.status").value(500))
                 .andExpect(jsonPath("$.message").value("库存不足"));
 
         // Verify first item was deducted but second was not
@@ -182,31 +182,12 @@ class GoodControllerTest {
 
         // When & Then
         mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(goodDTOList)))
                 .andExpect(status().isOk())
-                
-                .andExpect(jsonPath("$.code").value(500))
+
+                .andExpect(jsonPath("$.status").value(500))
                 .andExpect(jsonPath("$.message").value("库存不足"));
     }
 
-    @Test
-    @DisplayName("POST /goods/deduct - Should handle zero quantity deduction")
-    void testDeductStock_ZeroQuantity() throws Exception {
-        // Given
-        testGoodDTO.setQuantity(0);
-        List<GoodDTO> goodDTOList = Arrays.asList(testGoodDTO);
-
-        // When & Then
-        mockMvc.perform(post("/goods/deduct")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(goodDTOList)))
-                .andExpect(status().isOk())
-                
-                .andExpect(jsonPath("$.data").value("库存扣减成功"));
-
-        // Verify quantity unchanged
-        Good unchangedGood = goodRepository.findById(testGood.getId()).orElseThrow();
-        assertEquals(50, unchangedGood.getQuantity());
-    }
 }

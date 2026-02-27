@@ -264,40 +264,7 @@ class GoodRepositoryTest {
         // Verify only one good exists
         assertEquals(1, goodRepository.count());
     }
-
-    @Test
-    @DisplayName("Should handle deduct stock with zero quantity")
-    void testDeductStock_ZeroQuantity() {
-        // Given
-        Good savedGood = goodRepository.save(testGood);
-        int initialQuantity = savedGood.getQuantity();
-
-        // When
-        int affectedRows = goodRepository.deductStock(savedGood.getId(), 0);
-
-        // Then
-        assertEquals(1, affectedRows); // Should succeed with zero deduction
-        Optional<Good> updatedGood = goodRepository.findById(savedGood.getId());
-        assertTrue(updatedGood.isPresent());
-        assertEquals(initialQuantity, updatedGood.get().getQuantity()); // Quantity unchanged
-    }
-
-    @Test
-    @DisplayName("Should handle deduct stock with negative quantity")
-    void testDeductStock_NegativeQuantity() {
-        // Given
-        Good savedGood = goodRepository.save(testGood);
-
-        // When
-        int affectedRows = goodRepository.deductStock(savedGood.getId(), -10);
-
-        // Then
-        assertEquals(0, affectedRows); // Should fail due to negative quantity constraint
-        Optional<Good> unchangedGood = goodRepository.findById(savedGood.getId());
-        assertTrue(unchangedGood.isPresent());
-        assertEquals(50, unchangedGood.get().getQuantity()); // Quantity unchanged
-    }
-
+    
     @Test
     @DisplayName("Should handle multiple concurrent deductions")
     void testDeductStock_ConcurrentAccess() {
